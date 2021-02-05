@@ -28,7 +28,6 @@ from tests import (
 @pytest.mark.parametrize(
     "cfg, key, expected_is_missing, expectation",
     [
-        ({}, "foo", False, does_not_raise()),
         ({"foo": True}, "foo", False, does_not_raise()),
         ({"foo": "${no_such_key}"}, "foo", False, raises(ConfigKeyError)),
         ({"foo": MISSING}, "foo", True, raises(MissingMandatoryValue)),

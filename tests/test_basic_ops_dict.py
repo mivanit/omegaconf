@@ -20,7 +20,12 @@ from omegaconf import (
     open_dict,
 )
 from omegaconf.basecontainer import BaseContainer
-from omegaconf.errors import ConfigKeyError, ConfigTypeError, KeyValidationError
+from omegaconf.errors import (
+    ConfigAttributeError,
+    ConfigKeyError,
+    ConfigTypeError,
+    KeyValidationError,
+)
 from tests import (
     ConcretePlugin,
     Enum1,
@@ -134,13 +139,14 @@ class TestDelitemKeyTypes:
         assert key not in c
 
 
-def test_default_value() -> None:
+def test_attribute_error() -> None:
     c = OmegaConf.create()
-    assert c.missing_key or "a default value" == "a default value"
+    with pytest.raises(ConfigAttributeError):
+        assert c.missing_key
 
 
-def test_get_default_value() -> None:
-    c = OmegaConf.create()
+@pytest.mark.parametrize("c", [{}, OmegaConf.create()])
+def test_get_default_value(c: Any) -> None:
     assert c.get("missing_key", "a default value") == "a default value"
 
 
@@ -873,3 +879,14 @@ def test_assign_to_sc_field_without_ref_type() -> None:
 
     cfg.plugin = 10
     assert cfg.plugin == 10
+
+
+def test_dict_getitem_not_found() -> None:
+    cfg = OmegaConf.create()
+    with pytest.raises(ConfigKeyError):
+        cfg["aaa"]
+
+
+def test_dict_getitem_none_output() -> None:
+    cfg = OmegaConf.create({"a": None})
+    assert cfg["a"] is None

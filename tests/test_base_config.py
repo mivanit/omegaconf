@@ -754,4 +754,4 @@ def test_get_node(cfg: Any, key: Any, expected: Any) -> None:
 def test_get_node_throw_on_missing(cfg: Any, key: Any) -> None:
     cfg = OmegaConf.create(cfg)
     with pytest.raises(MissingMandatoryValue, match="Missing mandatory value"):
-        cfg._get_node(key, throw_on_missing=True)
+        cfg._get_node(key, throw_on_missing_value=True)
